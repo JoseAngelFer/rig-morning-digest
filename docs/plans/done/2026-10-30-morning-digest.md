@@ -92,8 +92,8 @@ The original plan above is preserved apart from its completed status. Actual iss
 8. [#8 · Marker cleanup and plan archive](https://github.com/JoseAngelFer/rig-morning-digest/issues/8)
 
 Human decisions and gates: board counts reflect each job's final status, not event totals;
-a recovered retry counts as ok. Preview delivery alone did not complete #7: the reviewer
-actually saw it before #7 closed. Separate explicit human approval then authorized replacement,
+a recovered retry counts as ok. The course rejected the premature closure of #7 on delivery;
+it was reopened, and its final closure followed confirmed review. Separate explicit human approval then authorized replacement,
 retained-artifact deletion, and repository marker-secret deletion.
 
 Cleanup owner: the sole #8 worker on `issue/preview-cleanup`; coordinator verifies and integrates
