@@ -3,7 +3,8 @@
 **Preparation only: human publication approval is still pending.** Committing this code
 is not approval. Do not dispatch, publish, change repository settings/secrets, or set up
 external services until the human/coordinator explicitly approves those actions.
-Issue #7 stays open until its Done when conditions hold, including delivery to the reviewer.
+Issue #7 stays open until its Done when conditions hold AND the reviewer has looked.
+The course rejected closing it on delivery alone; sending the link is not review completion.
 
 ## Approved manual publication
 
@@ -40,8 +41,8 @@ never print its value or attach the HTML. Record the URL, workflow run ID, commi
 verification result only. The Pages URL may contain a repository path; do not guess it.
 
 Send the verified URL and all eight actual plan issue URLs (#1–#8) to the reviewer. Record
-evidence of delivery without copying preview content. Only then can #7 be closed if all
-its other gates hold. Local export or an unshared deployment is not completion.
+evidence of delivery without copying preview content. Keep #7 open until the reviewer has actually looked and the course confirms that step;
+delivery alone is not sufficient. Local export or an unshared deployment is not completion.
 
 After verifying a successful deployment, the authorized coordinator should delete the
 `github-pages` artifact from that run and **all older preview runs**, including failed
