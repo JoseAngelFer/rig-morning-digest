@@ -6,6 +6,7 @@ Approved by the human for `plan:morning-digest`:
 - Every issue opens with `Source: plan.md § <section>`.
 - Every issue carries the `plan:morning-digest` label.
 - Required sections: Scope, Done when, Blocked by, **Acceptance tests**.
+- Human chose final job status counts on the board, not event totals. A retried job that recovered counts as ok.
 - The four section-2 workers may start once the shared types commit exists. Reader and route integration are final-check dependencies, not blanket start dependencies.
 - One worker and separate branch/worktree per issue. Follow the closing-comment format in `AGENTS.md`; leave issues open until their done conditions actually hold.
 - Publication and later replacement without the marker require separate human approval. Cleanup waits for the review, not merely submission.
