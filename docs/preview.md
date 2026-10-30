@@ -1,10 +1,22 @@
 # Review preview (issue #7)
 
-**Preparation only: human publication approval is still pending.** Committing this code
-is not approval. Do not dispatch, publish, change repository settings/secrets, or set up
-external services until the human/coordinator explicitly approves those actions.
-Issue #7 stays open until its Done when conditions hold AND the reviewer has looked.
-The course rejected closing it on delivery alone; sending the link is not review completion.
+**Morning-digest review and approved cleanup completed · 2026-10-30.** The reviewer saw
+the preview before #7 closed; separate human approval authorized marker-free replacement,
+retained-artifact deletion, and repository marker-secret deletion. Successful
+[cleanup run 41054132108](https://github.com/JoseAngelFer/rig-morning-digest/actions/runs/41054132108)
+replaced https://joseangelfer.github.io/rig-morning-digest/ at the same URL. A canonical
+HTTP 200 fetch verified `no marker set`, absence of the former marker, all five sorted
+sample jobs, the null-owner em dash, inline CSS, and no scripts or dependent assets.
+The first fetch passed without cache-busting or propagation retries. All retained
+`github-pages` artifacts and the repository Actions secret `LANE_MARKER` were deleted;
+fresh listings confirmed their absence. See the
+[completed plan](plans/done/2026-10-30-morning-digest.md) for issue links and cleanup ownership.
+Issue #8 awaits coordinator verification/integration of this completion record.
+
+For future previews, committing this code is not approval. Do not dispatch, publish,
+change repository settings/secrets, or set up external services until the human/coordinator
+explicitly approves those actions. A preview issue stays open until its Done when
+conditions hold AND the reviewer has looked. Sending the link alone is not review completion.
 
 ## Approved manual publication
 

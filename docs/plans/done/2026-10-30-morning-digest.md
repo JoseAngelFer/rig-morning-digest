@@ -1,6 +1,6 @@
 ---
 plan: morning-digest
-status: ready
+status: done
 owner: rook
 opened: 2026-10-29
 ---
@@ -77,3 +77,39 @@ page again with `LANE_MARKER` unset (the banner reads "no marker set") and uploa
 link. Move this plan to `docs/plans/done/` with its issue list.
 
 Done when: the preview link no longer shows the lane marker.
+
+## Completion record · 2026-10-30
+
+The original plan above is preserved apart from its completed status. Actual issues:
+
+1. [#1 · Shared digest types and reader contract](https://github.com/JoseAngelFer/rig-morning-digest/issues/1)
+2. [#2 · Run-log reader](https://github.com/JoseAngelFer/rig-morning-digest/issues/2)
+3. [#3 · Digest page](https://github.com/JoseAngelFer/rig-morning-digest/issues/3)
+4. [#4 · JSON digest endpoint](https://github.com/JoseAngelFer/rig-morning-digest/issues/4)
+5. [#5 · Status board links and counts](https://github.com/JoseAngelFer/rig-morning-digest/issues/5)
+6. [#6 · Digest route tests](https://github.com/JoseAngelFer/rig-morning-digest/issues/6)
+7. [#7 · Review preview](https://github.com/JoseAngelFer/rig-morning-digest/issues/7)
+8. [#8 · Marker cleanup and plan archive](https://github.com/JoseAngelFer/rig-morning-digest/issues/8)
+
+Human decisions and gates: board counts reflect each job's final status, not event totals;
+a recovered retry counts as ok. Preview delivery alone did not complete #7: the reviewer
+actually saw it before #7 closed. Separate explicit human approval then authorized replacement,
+retained-artifact deletion, and repository marker-secret deletion.
+
+Cleanup owner: the sole #8 worker on `issue/preview-cleanup`; coordinator verifies and integrates
+this archive and closes the issue. The coordinator dispatched the marker-free workflow on main
+at `e3c355f833fe137a0e1448cc0764011ea371400e` with `include_marker: false`.
+[Cleanup workflow run 41054132108](https://github.com/JoseAngelFer/rig-morning-digest/actions/runs/41054132108)
+completed successfully.
+
+Public verification fetched the exact original canonical URL,
+https://joseangelfer.github.io/rig-morning-digest/, without cache-busting. The first fetch
+returned HTTP 200, the `no marker set` banner, no former marker, all five sorted sample jobs,
+the null-owner em dash, and one inline stylesheet with no scripts or dependent assets.
+No propagation delay or retry was needed. Private request/reply and verification receipts
+remain outside the repository; no HTML or marker is recorded here.
+
+After successful public verification, all retained `github-pages` artifacts for this repository
+were deleted, including the cleanup run's artifact; a fresh listing confirmed none remained.
+The repository Actions secret `LANE_MARKER` was deleted under the same explicit approval,
+and a name-only listing confirmed its absence. Original proof receipts were left unchanged.
