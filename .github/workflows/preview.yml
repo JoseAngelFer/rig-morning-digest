@@ -1,0 +1,95 @@
+name: Review preview
+
+# Publication is NOT approved by committing this workflow.
+# Human/coordinator must record separate approval before any dispatch.
+on:
+  workflow_dispatch:
+    inputs:
+      include_marker:
+        description: Include the lane marker (requires explicit publication approval)
+        type: boolean
+        required: true
+        default: false
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: github-pages
+  cancel-in-progress: false
+
+jobs:
+  preview:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 12.16.1
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm test
+      - run: pnpm typecheck
+      - name: Export from the real HTTP service
+        shell: bash
+        env:
+          INCLUDE_MARKER: ${{ inputs.include_marker }}
+          REQUESTED_MARKER: ${{ inputs.include_marker && secrets.LANE_MARKER || '' }}
+        run: |
+          set -euo pipefail
+          umask 077
+          if [[ "$INCLUDE_MARKER" == true ]]; then
+            # Reject empty/whitespace-only secrets without ever printing their value.
+            if [[ -z "${REQUESTED_MARKER//[[:space:]]/}" ]]; then
+              echo 'include_marker requires a nonblank LANE_MARKER repository secret' >&2
+              exit 1
+            fi
+            export LANE_MARKER="$REQUESTED_MARKER"
+          else
+            unset LANE_MARKER
+          fi
+          unset REQUESTED_MARKER
+          preview=$(mktemp -d "$RUNNER_TEMP/rig-preview.XXXXXX")
+          echo "PREVIEW_DIRECTORY=$preview" >> "$GITHUB_ENV"
+          service_log=$(mktemp "$RUNNER_TEMP/rig-service.XXXXXX")
+          # Bypass dotenv loading entirely; CI needs no .env file.
+          HOST=127.0.0.1 PORT=8787 pnpm exec tsx src/server.ts >"$service_log" 2>&1 &
+          service_pid=$!
+          trap 'kill "$service_pid" 2>/dev/null || true; rm -f "$service_log"' EXIT
+          ready=false
+          for attempt in {1..60}; do
+            if curl --fail --silent --output /dev/null --max-time 2 http://127.0.0.1:8787/health; then
+              ready=true
+              break
+            fi
+            kill -0 "$service_pid" 2>/dev/null || { echo 'Service exited before readiness' >&2; exit 1; }
+            sleep 1
+          done
+          [[ "$ready" == true ]] || { echo 'Service readiness timed out' >&2; exit 1; }
+          PORT=8787 bash scripts/export-preview.sh "$preview"
+      - uses: actions/configure-pages@v5
+        with:
+          enablement: false
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: ${{ env.PREVIEW_DIRECTORY }}
+          retention-days: 1
+      - name: Deploy approved preview
+        id: deployment
+        uses: actions/deploy-pages@v4
+      - name: Remove runner copy
+        if: always()
+        shell: bash
+        run: |
+          if [[ -n "${PREVIEW_DIRECTORY:-}" ]]; then
+            rm -rf -- "$PREVIEW_DIRECTORY"
+          fi
