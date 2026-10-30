@@ -59,7 +59,7 @@ describe('digest routes', () => {
       rows: [
         {
           job: 'alpha', owner: null, runs: 3, retries: 2, lastStatus: 'ok',
-          lastError: 'alpha recorded error', firstAt: '2026-10-28T02:00:00+01:00', lastAt: '2026-10-28T03:30:00+01:00',
+          lastError: 'same alpha error', firstAt: '2026-10-28T02:00:00+01:00', lastAt: '2026-10-28T03:30:00+01:00',
         },
         {
           job: 'beta', owner: null, runs: 4, retries: 3, lastStatus: 'fail',
@@ -89,7 +89,8 @@ describe('digest routes', () => {
     expect(html).not.toContain('<job>');
     expect(html).toContain('&lt;owner&gt; &amp;');
     expect(html).toContain('—');
-    expect(html).toContain('alpha recorded error');
+    expect(html).toContain('same alpha error');
+    expect(html).not.toContain('alpha recorded error');
     expect(html).toContain('final beta failure');
     expect(html).toContain('2026-10-28T02:00:00+01:00');
     expect(html).toContain('2026-10-28T03:30:00+01:00');
@@ -100,7 +101,13 @@ describe('digest routes', () => {
     expect(html.indexOf('alpha')).toBeLessThan(html.indexOf('beta'));
     expect(html.indexOf('beta')).toBeLessThan(html.indexOf('xss &lt;job&gt;'));
     expect(html.indexOf('xss &lt;job&gt;')).toBeLessThan(html.indexOf('zeta'));
-    expect(html).toMatch(/beta[\s\S]*?(?:retry|warning|fail)/i);
+    const tableRows = [...html.matchAll(/<tr(?: class="([^"]*)")?>[\s\S]*?<\/tr>/g)];
+    const rowContaining = (value: string): RegExpMatchArray | undefined =>
+      tableRows.find((row) => row[0].includes(value));
+    expect(rowContaining('beta')?.[1]).toBe('warn');
+    expect(rowContaining('alpha')?.[1]).not.toBe('warn');
+    expect(rowContaining('xss &lt;job&gt;')?.[1]).not.toBe('warn');
+    expect(rowContaining('zeta')?.[1]).not.toBe('warn');
   });
 
   it('returns safe 404 responses for missing and invalid nights', async () => {
